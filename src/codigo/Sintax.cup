@@ -1,0 +1,117 @@
+package codigo;
+
+import java_cup.runtime.Symbol;
+
+parser code
+{:
+    private Symbol s;
+    
+    public void syntax_error(Symbol s){
+        this.s = s;
+    }
+
+    public Symbol getS(){
+        return this.s;
+}
+:};
+
+terminal T_dato, Comillas, ComillaSimple, Linea, If, Else, While, For, Cadena, Igual, Suma, 
+   Resta, Multiplicacion, Division, Op_logico, Op_relacional, Op_booleano, 
+   Coma, P_Coma, Parentesis_a, Parentesis_c, Llave_a, Llave_c, Identificador, 
+   Cin, Cout, Caracter, Numero, ERROR;
+
+non terminal S, OPERADOR, CONDICIONAL, ASIGNACION, VARIABLE, B, A, 
+        CONDICION, LOGICO, LOGICONUMERICO, LOGICOBOOLEANO, MANEJOVARIABLE, 
+        SARITMETICA, FACTOR, FACTMULT;
+
+start with S;
+
+S ::=
+    CONDICION |
+    VARIABLE | 
+    Cout Parentesis_a Numero Parentesis_c |
+    Cout Parentesis_a Identificador Parentesis_c | 
+    Cout Parentesis_a SARITMETICA Parentesis_c | 
+    ASIGNACION |
+    Cout Parentesis_a Cadena Parentesis_c
+;
+OPERADOR ::= 
+    Suma |
+    Resta |
+    Multiplicacion | 
+    Division
+;
+CONDICIONAL ::= 
+    Op_relacional |
+    Op_logico
+;
+ASIGNACION ::= 
+    Identificador Igual SARTIMETICA A |
+    Identificador Igual B A  |
+    Identificador Igual Op_booleano A |
+    Identificador Igual Numero A  |
+    Identificador Igual Numero Coma Numero A  | 
+    Identificador Igual Identificador A 
+;
+VARIABLE ::= 
+    T_dato Identificador Igual SARTIMETICA A |
+    T_dato Identificador Igual Numero A | 
+    T_dato Identificador Igual B A |
+    T_dato Identificador Igual Numero Coma Numero A |
+    T_dato Identificador Igual SARITMETICA A | 
+    T_dato Identificador Igual B A | 
+    Cadena Identificador Igual Comillas Identificador Comillas A | 
+    T_dato Identificador Igual ComillaSimple Caracter ComillaSimple A
+;
+B ::=  
+    Identificador |
+    Cin
+;
+A ::= 
+    P_Coma |
+    P_Coma S
+;
+CONDICION ::= 
+    If Parentesis_a LOGICO Parentesis_c Llave_a S Llave_c |
+    If Parentesis_a LOGICO Parentesis_c Llave_a S Llave_c Else Llave_a S Llave_c |
+    While Parentesis_a LOGICO Parentesis_c Llave_a S Llave_c | 
+    For Parentesis_a  Variable P_Coma Identificador CONDICIONAL Identificador P_Coma Identificador Igual Identificador OPERADOR Numero Parentesis_c Llave_a S Llave_c |
+    For Parentesis_a  Identificador P_Coma Identificador CONDICIONAL Identificador P_Coma Identificador Igual Identificador OPERADOR Numero Parentesis_c Llave_a S Llave_c |
+    For Parentesis_a  T_dato Variable P_Coma Identificador CONDICIONAL Identificador P_Coma Identificador Igual Identificador OPERADOR Numero Parentesis_c Llave_a S Llave_c |
+    For Parentesis_a  T_dato Identificador P_Coma Identificador CONDICIONAL Identificador P_Coma Identificador Igual Identificador OPERADOR Numero Parentesis_c Llave_a S Llave_c
+;   
+LOGICO ::= 
+    LOGICONUMERICO | 
+    LOGICOBOOLEANO  
+;
+LOGICONUMERICO ::= 
+    Identificador Op_relacional Identificador  Op_logico LOGICO |
+    Identificador Op_relacional Identificador |
+    Identificador Op_relacional Numero  Op_logico LOGICO |
+    Identificador Op_relacional Numero |
+    Numero Op_relacional Numero  Op_logico LOGICO |
+    Numero Op_relacional Numero |
+    Numero Op_relacional Identificador  Op_logico LOGICO |
+    Numero Op_relacional Identificador
+;
+LOGICOBOOLEANO ::=  
+    Identificador Op_logico Identificador Op_logico LOGICO |
+    Identificador Op_logico Identificador
+;
+MANEJOVARIABLE ::= 
+    Identificador = SARTIMETICA
+;
+SARTIMETICA ::= 
+   FACTOR Suma FACTOR |
+   FACTOR Resta FACTOR |
+   FACTOR
+;
+FACTOR ::= 
+    FACTMULT Division FACTMULT |
+    FACTMULT Multiplicacion FACTMULT |
+    FACTMULT 
+;
+FACTMULT ::=  
+    Parentesis_a SARTIMETICA Parentesis_c  | 
+    Identificador | 
+    Numero
